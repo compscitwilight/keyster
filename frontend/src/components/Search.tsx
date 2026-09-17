@@ -1,14 +1,18 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, SubmitEvent, useState } from "react";
 
 export function Search(props: { onQuery: (query: string) => void }) {
   const [query, setQuery] = useState<string>("");
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) =>
     setQuery(e.target.value);
-  const onSearch = () => props.onQuery(query);
+
+  const onSearch = (e: SubmitEvent) => {
+    e.preventDefault();
+    props.onQuery(query);
+  };
 
   return (
-    <form className="flex justify-center gap-4">
+    <form onSubmit={onSearch} className="flex justify-center gap-4">
       <input
         onChange={onChange}
         className="dark:bg-neutral-700 w-1/2 px-2 py-1 rounded-lg"
@@ -16,7 +20,6 @@ export function Search(props: { onQuery: (query: string) => void }) {
         type="text"
       />
       <button
-        onClick={onSearch}
         className="
         dark:bg-neutral-900
         p-2
