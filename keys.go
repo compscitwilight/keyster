@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 	"time"
@@ -14,7 +15,7 @@ import (
 
 type KeyListing struct {
 	Name     string    `json:"name"`
-	Algo     KeyAlgo   `json:"algo"` // cryptographic algorithm
+	Algo     *KeyAlgo  `json:"algo"` // cryptographic algorithm
 	Modified time.Time `json:"modified"`
 }
 
@@ -32,6 +33,8 @@ type KeyAlgo struct {
 
 // GetKeys returns the list of all keys found in the SSH directory
 func (a *App) GetKeys() *[]KeyListing {
+	log.Println("keys instantiated")
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Errorf("Failed to get user home directory: ", err)
@@ -69,9 +72,10 @@ func (a *App) GetKeys() *[]KeyListing {
 			fmt.Errorf("Failed to determine cryptographic algorithm for key file: ", err)
 		}
 
+		log.Println(algo)
 		listings = append(listings, KeyListing{
 			Name:     info.Name(),
-			Algo:     *algo,
+			Algo:     algo,
 			Modified: info.ModTime(),
 		})
 	}
