@@ -18,7 +18,7 @@ function App() {
         results = results.filter((r) =>
           r.name.toLowerCase().includes(query.toLowerCase()),
         );
-      setKeyListings(results); // add filter logic here
+      setKeyListings(results.filter((k) => k.algo !== null)); // add filter logic here
     });
   }, [query]);
 
