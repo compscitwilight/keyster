@@ -14,8 +14,20 @@ import (
 
 type KeyListing struct {
 	Name     string    `json:"name"`
-	Algo     string    `json:"algo"` // cryptographic algorithm
+	Algo     KeyAlgo   `json:"algo"` // cryptographic algorithm
 	Modified time.Time `json:"modified"`
+}
+
+type KeyAlgoType string
+
+const (
+	PUBLIC  KeyAlgoType = "public"
+	PRIVATE KeyAlgoType = "private"
+)
+
+type KeyAlgo struct {
+	Type KeyAlgoType `json:"type"`
+	Algo string      `json:"algo"`
 }
 
 // GetKeys returns the list of all keys found in the SSH directory
@@ -59,7 +71,7 @@ func (a *App) GetKeys() *[]KeyListing {
 
 		listings = append(listings, KeyListing{
 			Name:     info.Name(),
-			Algo:     algo,
+			Algo:     *algo,
 			Modified: info.ModTime(),
 		})
 	}
