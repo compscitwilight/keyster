@@ -10,6 +10,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/kevinburke/ssh_config"
@@ -110,15 +112,11 @@ func GetSSHConfig() (*ssh_config.Config, error) {
 // GetHostBlockForKey searches the SSH config and matches with an ssh_config.Host
 // that corresponds to the key file.
 func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaration, error) {
-	var hostBlock *HostDeclaration
+	hostBlock := &HostDeclaration{}
 	for _, host := range cfg.Hosts {
 		nodes := host.Nodes
-
-		currentHostBlock := &HostDeclaration{}
 		for _, v := range nodes {
 			trueString := v.String()
-			// log.Println(i)
-			// log.Println(trueString)
 			if len(trueString) > 0 {
 				trueString = trueString[1:]
 			}
@@ -130,19 +128,84 @@ func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaratio
 
 			key := segments[0]
 			val := segments[1]
-			log.Println(key)
-			log.Println(val)
+
+			// log.Println(key)
+			// log.Println(val)
 
 			// TODO: map to HostDeclaration
+			decReflection := reflect.ValueOf(hostBlock).Elem()
+			t := decReflection.Type()
+			formattedKey := strings.ToLower(key)
+			var fieldVal reflect.Value
+
+			for i := 0; i < t.NumField(); i++ {
+				structField := t.Field(i)
+				jsonTag := strings.Split(structField.Tag.Get("json"), ",")[0]
+				if strings.ToLower(structField.Name) == formattedKey || strings.ToLower(jsonTag) == formattedKey {
+					fieldVal = decReflection.Field(i)
+					break
+				}
+			}
+
+			if !fieldVal.IsValid() {
+				fmt.Errorf("Invalid field %s found", formattedKey)
+				continue
+			}
+
+			if fieldVal.Kind() != reflect.Ptr {
+				return nil, fmt.Errorf("Expected pointer value for %s", formattedKey)
+			}
+
+			elemType := fieldVal.Type().Elem()
+			newPtr := reflect.New(elemType)
+			elem := newPtr.Elem()
+
+			switch elem.Kind() {
+			case reflect.String:
+				elem.SetString(val)
+			case reflect.Bool:
+				switch strings.ToLower(val) {
+				case "yes", "true", "on", "1":
+					elem.SetBool(true)
+				case "no", "false", "off", "0":
+					elem.SetBool(false)
+				}
+			case reflect.Uint:
+				u, err := strconv.ParseUint(val, 10, 64)
+				if err != nil {
+					return nil, fmt.Errorf("invalid uint %q for %s", val, key)
+				}
+				elem.SetUint(u)
+			case reflect.Int:
+				i, err := strconv.ParseInt(val, 10, 64)
+				if err != nil {
+					return nil, fmt.Errorf("invalid int %d for %s", val, key)
+				}
+				elem.SetInt(i)
+			case reflect.Slice:
+				log.Println("slice")
+			default:
+				return nil, fmt.Errorf("unsupported field type %s for type %s", elem.Kind(), key)
+			}
+
+			fieldVal.Set(newPtr)
 		}
 
-		if currentHostBlock.IdentityFile != nil && *currentHostBlock.IdentityFile == absPath {
-			hostBlock = currentHostBlock
-			break
-		}
+		// mapBytes, err := json.Marshal(mappings)
+		// if err != nil {
+		// 	fmt.Errorf("Failed to marshal map bytes")
+		// 	continue
+		// }
+
+		// var marshaled HostDeclaration
+		// if err := json.Unmarshal(mapBytes, &marshaled); err != nil {
+		// 	fmt.Errorf("Failed to unmarshal to host declaration struct")
+		// 	continue
+		// }
+
+		// if *marshaled.IdentityFile == absPath {
+		// hostBlock = &marshaled
 	}
-
-	// log.Println(hostBlock)
 
 	if hostBlock == nil {
 		return nil, fmt.Errorf("failed to find host declaration for key")
