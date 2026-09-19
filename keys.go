@@ -7,16 +7,19 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
 type KeyListing struct {
-	Name     string    `json:"name"`
-	Algo     *KeyAlgo  `json:"algo"` // cryptographic algorithm
-	Modified time.Time `json:"modified"`
+	Name       string           `json:"name"`
+	AbsPath    string           `json:"absPath"`
+	Algo       *KeyAlgo         `json:"algo"` // cryptographic algorithm
+	HostConfig *HostDeclaration `json:"hostConfig"`
+	Modified   time.Time        `json:"modified"`
 }
 
 type KeyAlgoType string
@@ -33,18 +36,17 @@ type KeyAlgo struct {
 
 // GetKeys returns the list of all keys found in the SSH directory
 func (a *App) GetKeys() *[]KeyListing {
-	log.Println("keys instantiated")
-
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Errorf("Failed to get user home directory: ", err)
-		return nil
-	}
-
-	keysDirPath := path.Join(homeDir, ".ssh")
+	homeDirPath := os.Getenv("HOME")
+	keysDirPath := filepath.Join(homeDirPath, ".ssh")
 	keysDirContents, err := os.ReadDir(keysDirPath)
 	if err != nil {
 		fmt.Errorf("Failed to get key directory contents: ", err)
+		return nil
+	}
+
+	cfg, err := GetSSHConfig()
+	if err != nil {
+		fmt.Errorf("Failed to retrieve SSH configuration: ", err)
 		return nil
 	}
 
@@ -60,11 +62,16 @@ func (a *App) GetKeys() *[]KeyListing {
 			continue
 		}
 
-		absPath := path.Join(keysDirPath, keyFile.Name())
+		absPath := strings.ReplaceAll(path.Join(keysDirPath, keyFile.Name()), homeDirPath, "~")
+		// var associatedHost *ssh_config.Host
+		host, err := GetHostBlockForKey(cfg, absPath)
+		if err != nil {
+			fmt.Errorf(err.Error())
+		}
+
 		contents, err := os.ReadFile(absPath)
 		if err != nil {
 			fmt.Errorf("Failed to read key file contents: ", err)
-			continue
 		}
 
 		algo, err := IdentifyCryptographicAlgorithm(contents)
@@ -72,11 +79,12 @@ func (a *App) GetKeys() *[]KeyListing {
 			fmt.Errorf("Failed to determine cryptographic algorithm for key file: ", err)
 		}
 
-		log.Println(algo)
 		listings = append(listings, KeyListing{
-			Name:     info.Name(),
-			Algo:     algo,
-			Modified: info.ModTime(),
+			Name:       info.Name(),
+			AbsPath:    absPath,
+			Algo:       algo,
+			HostConfig: host,
+			Modified:   info.ModTime(),
 		})
 	}
 
