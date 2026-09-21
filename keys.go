@@ -62,7 +62,7 @@ func (a *App) GetKeys() *[]KeyListing {
 			continue
 		}
 
-		absPath := strings.ReplaceAll(path.Join(keysDirPath, keyFile.Name()), homeDirPath, "~")
+		absPath := strings.ReplaceAll(path.Join(keysDirPath, keyFile.Name()), "~", homeDirPath)
 		// var associatedHost *ssh_config.Host
 		host, err := GetHostBlockForKey(cfg, absPath)
 		if err != nil {
