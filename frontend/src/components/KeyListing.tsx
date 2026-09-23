@@ -4,12 +4,16 @@ import { EllipsisVertical } from "lucide-react";
 import type { IKeyListing } from "../types";
 import { KeyListingDropdown } from "./KeyListingDropdown";
 
-export function KeyListing({ data }: { data: IKeyListing }) {
+export function KeyListing({ data, onClick }: {
+  data: IKeyListing;
+  onClick?: () => void;
+}) {
   const [optionsToggled, setOptionsToggled] = useState<boolean>(false);
   const algo = data.algo?.algo || "unknown";
 
   return (
     <div
+      onClick={onClick}
       className="
       flex
       items-center
