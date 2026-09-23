@@ -6,14 +6,17 @@ import { KeyListingDropdown } from "./KeyListingDropdown";
 
 export function KeyListing({ data, onClick }: {
   data: IKeyListing;
-  onClick?: () => void;
+  onClick?: (absPath: string) => any;
 }) {
   const [optionsToggled, setOptionsToggled] = useState<boolean>(false);
   const algo = data.algo?.algo || "unknown";
 
   return (
     <div
-      onClick={onClick}
+      onClick={() => {
+        if (onClick) onClick(data.absPath);
+      }}
+      title={`Click to view details for ${data.name}`}
       className="
       flex
       items-center
@@ -21,6 +24,10 @@ export function KeyListing({ data, onClick }: {
       dark:border-neutral-900
       border
       p-3
+      cursor-pointer
+      transition-bg
+      duration-100
+      hover:dark:bg-neutral-700
       "
     >
       <div className="flex flex-1 items-center gap-2">

@@ -25,6 +25,13 @@ export function MainViewport() {
     return cp;
   })
 
+  const onKeyListingClick = (absPath: string) => setMenuState((s) => {
+    const cp = {} as MenuStateValue;
+    Object.assign(cp, s);
+    cp.selectedKey = absPath;
+    return cp;
+  })
+
  	useEffect(() => {
 		GetKeys().then((results: Array<IKeyListing>) => {
 			console.log(results);
@@ -51,7 +58,7 @@ export function MainViewport() {
 
 			<div className="grid gap-2 w-3/4 m-auto">
 				{keyListings.map((listing) => (
-					<KeyListing key={listing.name} data={listing} />
+					<KeyListing onClick={onKeyListingClick} key={listing.name} data={listing} />
 				))}
 			</div>
 
