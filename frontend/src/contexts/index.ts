@@ -4,7 +4,7 @@ import { IKeyListing } from "../types";
 // Types
 type StateContextValue<T> = [T, React.Dispatch<React.SetStateAction<T>>] | null;
 
-interface MenuStateValue {
+export interface MenuStateValue {
 	query?: string;
 
 	// When set to a key's `absPath` (used as identifier),
