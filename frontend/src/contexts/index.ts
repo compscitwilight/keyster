@@ -1,7 +1,7 @@
 import React, { createContext } from "react";
 
 // Types
-type StateContextValue<T> = React.Dispatch<React.SetStateAction<T>> | null;
+type StateContextValue<T> = [T, React.Dispatch<React.SetStateAction<T>>] | null;
 
 interface MenuStateValue {
 	// When set to a key's `absPath` (used as identifier),
