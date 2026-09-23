@@ -115,6 +115,7 @@ func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaratio
 	hostBlock := &HostDeclaration{}
 	for _, host := range cfg.Hosts {
 		nodes := host.Nodes
+		this := &HostDeclaration{}
 		for _, v := range nodes {
 			trueString := v.String()
 			if len(trueString) > 0 {
@@ -129,11 +130,7 @@ func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaratio
 			key := segments[0]
 			val := segments[1]
 
-			// log.Println(key)
-			// log.Println(val)
-
-			// TODO: map to HostDeclaration
-			decReflection := reflect.ValueOf(hostBlock).Elem()
+			decReflection := reflect.ValueOf(this).Elem()
 			t := decReflection.Type()
 			formattedKey := strings.ToLower(key)
 			var fieldVal reflect.Value
@@ -191,20 +188,9 @@ func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaratio
 			fieldVal.Set(newPtr)
 		}
 
-		// mapBytes, err := json.Marshal(mappings)
-		// if err != nil {
-		// 	fmt.Errorf("Failed to marshal map bytes")
-		// 	continue
-		// }
-
-		// var marshaled HostDeclaration
-		// if err := json.Unmarshal(mapBytes, &marshaled); err != nil {
-		// 	fmt.Errorf("Failed to unmarshal to host declaration struct")
-		// 	continue
-		// }
-
-		// if *marshaled.IdentityFile == absPath {
-		// hostBlock = &marshaled
+		if this.IdentityFile != nil && *this.IdentityFile == absPath {
+			hostBlock = this
+		}
 	}
 
 	if hostBlock == nil {
