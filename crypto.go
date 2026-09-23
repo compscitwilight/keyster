@@ -65,5 +65,16 @@ func IdentifyCryptographicAlgorithm(contents []byte) (*KeyAlgo, error) {
 		return &KeyAlgo{Type: "private", Algo: "ECDSA"}, nil
 	}
 
+	if key, err := x509.ParsePKCS8PrivateKey(der); err == nil {
+		switch key.(type) {
+		case *rsa.PrivateKey:
+			return &KeyAlgo{Type: "private", Algo: "RSA"}, nil
+		case *ecdsa.PrivateKey:
+			return &KeyAlgo{Type: "private", Algo: "ECDSA"}, nil
+		case ed25519.PrivateKey:
+			return &KeyAlgo{Type: "private", Algo: "ED25519"}, nil
+		}
+	}
+
 	return nil, fmt.Errorf("failed to identify cryptographic key algorithm")
 }
