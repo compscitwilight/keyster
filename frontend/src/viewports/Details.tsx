@@ -122,11 +122,12 @@ export function DetailsViewport() {
 								{/* configured options */}
 								{Object.entries(hostConfig)
 									.filter(([, val]) => val !== null)
-									.map(([name, val]) => (
+									.map(([name, val], index) => (
 										<SSHConfigOption
 											key={name}
 											name={name}
-											value={val}
+                      value={val}
+											index={index}
 											onUpdate={(newVal) =>
 												onHostConfigUpdate(name, newVal)
 											}
@@ -161,11 +162,12 @@ export function DetailsViewport() {
 												.filter(
 													([, val]) => val === null,
 												)
-												.map(([name, val]) => (
+												.map(([name, val], index) => (
 													<SSHConfigOption
 														key={name}
 														name={name}
-														value={val}
+                            value={val}
+														index={index + 1} // increment for continuity
 													/>
 												))}
 										</div>
