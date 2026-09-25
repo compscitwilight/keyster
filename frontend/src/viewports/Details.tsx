@@ -125,7 +125,7 @@ export function DetailsViewport() {
 									.map(([name, val], index) => (
 										<SSHConfigOption
 											key={name}
-											name={name}
+											name={name as keyof main.HostDeclaration}
                       value={val}
 											index={index}
 											onUpdate={(newVal) =>
@@ -165,7 +165,7 @@ export function DetailsViewport() {
 												.map(([name, val], index) => (
 													<SSHConfigOption
 														key={name}
-														name={name}
+														name={name as keyof main.HostDeclaration}
                             value={val}
 														index={index + 1} // increment for continuity
 													/>
