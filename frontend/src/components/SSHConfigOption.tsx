@@ -83,7 +83,11 @@ export function SSHConfigOption({
 	value: SSHConfigValueType;
 	index?: number;
 	onUpdate?: (newVal: SSHConfigValueType) => any;
-}) {
+  }) {
+  // as of now, host field cannot be modified directly from this component
+  // in the future, this may change via a dedicated component
+	if (name === "host") return;
+
 	const inferredVal = HostDeclarationFieldTypes[name];
 	return (
 		<div

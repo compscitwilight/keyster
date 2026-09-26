@@ -43,7 +43,15 @@ export function DetailsViewport() {
 
 	function onSaveChanges() {
 		if (!listing) return;
-		SaveHostDeclaration(listing.name, hostConfig);
+    SaveHostDeclaration(listing.name, hostConfig);
+    setListing((ls) => {
+      if (!ls) return;
+      console.log("there is ls")
+      const cp = {} as typeof ls;
+      Object.assign(cp, ls);
+      cp.hostConfig = hostConfig;
+      return cp;
+		})
 	}
 
 	useEffect(() => {
@@ -133,11 +141,19 @@ export function DetailsViewport() {
 					</div>
 					<hr className="h-px my-1 border-0 dark:bg-neutral-500" />
 					<div className="grid gap-1">
-						{hostConfig ? (
+						{listing.hostConfig ? (
 							<>
 								{/* configured options */}
 								{Object.entries(hostConfig)
-									.filter(([, val]) => val !== null)
+									.filter(
+										([name]) =>
+											(
+												listing.hostConfig as Record<
+													string,
+													any
+												>
+											)[name] !== null,
+									)
 									.map(([name, val], index) => (
 										<SSHConfigOption
 											key={name}
@@ -178,7 +194,13 @@ export function DetailsViewport() {
 										<div className="grid gap-2">
 											{Object.entries(hostConfig)
 												.filter(
-													([, val]) => val === null,
+													([name]) =>
+														(
+															listing.hostConfig as Record<
+																string,
+																any
+															>
+														)[name] === null,
 												)
 												.map(([name, val], index) => (
 													<SSHConfigOption
