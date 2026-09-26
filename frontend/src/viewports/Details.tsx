@@ -6,6 +6,7 @@ import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { SSHConfigOption } from "../components/SSHConfigOption";
 import { main } from "../../wailsjs/go/models";
 import { IKeyListing } from "../types";
+import { SaveHostDeclaration } from "../../wailsjs/go/main/App";
 
 export function DetailsViewport() {
 	const menuStateContext = useContext(MenuStateContext);
@@ -40,6 +41,11 @@ export function DetailsViewport() {
 			return cp as main.HostDeclaration;
 		});
 
+	function onSaveChanges() {
+		if (!listing) return;
+		SaveHostDeclaration(listing.name, hostConfig);
+	}
+
 	useEffect(() => {
 		const res = keyListings.find(
 			(kl) => kl.absPath === menuState.selectedKey,
@@ -50,7 +56,6 @@ export function DetailsViewport() {
 
 		const cfg = res.hostConfig;
 		if (!cfg) return;
-		console.log(cfg);
 		setHostConfig(cfg);
 	}, []);
 
@@ -112,9 +117,20 @@ export function DetailsViewport() {
 
 				{/* ssh_config */}
 				<div className="grid text-left mx-24 mt-8">
-					<h1 className="text-xl font-bold">
-						SSH configuration options
-					</h1>
+					<div className="flex justify-between items-center">
+						<h1 className="text-xl font-bold">
+							SSH configuration options
+						</h1>
+						{JSON.stringify(hostConfig) !==
+							JSON.stringify(listing.hostConfig) && (
+							<button
+								className="bg-blue-800 px-2 py-1 rounded-lg font-semibold text-lg cursor-pointer"
+								onClick={onSaveChanges}
+							>
+								Save Changes
+							</button>
+						)}
+					</div>
 					<hr className="h-px my-1 border-0 dark:bg-neutral-500" />
 					<div className="grid gap-1">
 						{hostConfig ? (
@@ -125,8 +141,10 @@ export function DetailsViewport() {
 									.map(([name, val], index) => (
 										<SSHConfigOption
 											key={name}
-											name={name as keyof main.HostDeclaration}
-                      value={val}
+											name={
+												name as keyof main.HostDeclaration
+											}
+											value={val}
 											index={index}
 											onUpdate={(newVal) =>
 												onHostConfigUpdate(name, newVal)
@@ -165,9 +183,17 @@ export function DetailsViewport() {
 												.map(([name, val], index) => (
 													<SSHConfigOption
 														key={name}
-														name={name as keyof main.HostDeclaration}
-                            value={val}
+														name={
+															name as keyof main.HostDeclaration
+														}
+														value={val}
 														index={index + 1} // increment for continuity
+														onUpdate={(newVal) =>
+															onHostConfigUpdate(
+																name,
+																newVal,
+															)
+														}
 													/>
 												))}
 										</div>
