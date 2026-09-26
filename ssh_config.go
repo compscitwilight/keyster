@@ -92,11 +92,13 @@ type HostDeclaration struct {
 	XAuthLocation                    *string   `json:"xAuthLocation"`
 }
 
+// in the future, this will be platform-specific
+var SSH_CONFIG_PATH = filepath.Join(os.Getenv("HOME"), ".ssh", "config")
+
 // GetSSHConfig uses ssh_config to get a list of hosts defined in the
 // SSH config file.
 func GetSSHConfig() (*ssh_config.Config, error) {
-	path := filepath.Join(os.Getenv("HOME"), ".ssh", "config")
-	f, err := os.Open(path)
+	f, err := os.Open(SSH_CONFIG_PATH)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +109,14 @@ func GetSSHConfig() (*ssh_config.Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func GetSSHConfigBytes() ([]byte, error) {
+	return os.ReadFile(SSH_CONFIG_PATH)
+}
+
+func OverwriteSSHConfig(b []byte) error {
+	return os.WriteFile(SSH_CONFIG_PATH, b, 0644)
 }
 
 // GetHostBlockForKey searches the SSH config and matches with an ssh_config.Host
@@ -202,6 +212,114 @@ func GetHostBlockForKey(cfg *ssh_config.Config, absPath string) (*HostDeclaratio
 
 // SaveHostDeclaration takes the provided declaration and constructs a new host
 // block to add or replace the existing declaration in ~/.ssh/config
-func (*App) SaveHostDeclaration(absPath string, newDeclaration *HostDeclaration) error {
-	return nil
+func (*App) SaveHostDeclaration(name string, newDeclaration HostDeclaration) error {
+	contentsBytes, err := GetSSHConfigBytes()
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(contentsBytes), "\n")
+
+	var hostStart int = -1 // starting line indice of host declaration
+	var hostEnd int = -1
+
+	for i, rawLine := range lines {
+		line := strings.TrimSpace(rawLine)
+
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		fields := strings.Fields(line)
+		if len(fields) == 0 {
+			continue
+		}
+
+		if strings.EqualFold(fields[0], "Host") {
+			if hostStart != -1 {
+				hostEnd = i
+				break
+			}
+
+			for _, pattern := range fields[1:] {
+				if pattern == name {
+					hostStart = i
+					break
+				}
+			}
+		}
+	}
+
+	// last block in ~/.ssh/config
+	if hostStart != -1 && hostEnd == -1 {
+		hostEnd = len(lines)
+	}
+
+	newBlock := fmt.Sprintf("Host %s\n", name)
+	v := reflect.ValueOf(newDeclaration)
+	t := reflect.TypeOf(newDeclaration)
+
+	if v.Kind() == reflect.Ptr {
+		if !v.IsNil() {
+			v = v.Elem()
+			t = t.Elem()
+		}
+	}
+
+	log.SetFlags(0)
+	for i := 0; i < v.NumField(); i++ {
+		fieldName := t.Field(i).Name
+		fieldVal := v.Field(i)
+
+		if fieldVal.Kind() != reflect.Ptr || fieldVal.IsNil() {
+			continue
+		}
+
+		// fieldType := fieldVal.Elem().Kind()
+		elem := fieldVal.Elem()
+		switch elem.Kind() {
+		case reflect.String, reflect.Int:
+			strVal := elem.String()
+			newBlock += fmt.Sprintf("\t%s %s\n", fieldName, strVal)
+		case reflect.Bool:
+			var boolVal string
+			if elem.Bool() {
+				boolVal = "yes"
+			} else {
+				boolVal = "no"
+			}
+
+			newBlock += fmt.Sprintf("\t%s %s\n", fieldName, boolVal)
+		case reflect.Slice:
+			log.Println("needs support")
+		default:
+			log.Printf("Unsupported field type for %s\n", fieldName)
+			continue
+		}
+	}
+
+	// when both hostStart and hostEnd are resolved to -1, this means
+	// that a configuration block for the specified key does not exist
+	//
+	// in this case, we simply append to the lines a totally new block
+	var newBytes []byte
+	if hostStart == -1 && hostEnd == -1 {
+		lines = append(lines, strings.Split(newBlock, "\n")...)
+		newBytes = []byte(strings.Join(lines, "\n"))
+	} else {
+		newBlock = strings.Trim(newBlock, "\n")
+		newLines := strings.Split(newBlock, "\n")
+		updatedLines := make([]string, 0, len(lines)-(hostEnd-hostStart)+len(newLines))
+		updatedLines = append(updatedLines, lines[:hostStart]...)
+		updatedLines = append(updatedLines, newLines...)
+		updatedLines = append(updatedLines, lines[hostEnd:]...)
+		newBytes = []byte(strings.Join(updatedLines, "\n"))
+	}
+
+	if newBytes == nil {
+		return fmt.Errorf("failed to prepare for SSH config overwrite")
+	}
+
+	log.Println("saving new contents")
+	return OverwriteSSHConfig(newBytes)
 }
