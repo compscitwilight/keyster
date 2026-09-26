@@ -279,8 +279,10 @@ func (*App) SaveHostDeclaration(name string, newDeclaration HostDeclaration) err
 		elem := fieldVal.Elem()
 		switch elem.Kind() {
 		case reflect.String, reflect.Int:
-			strVal := elem.String()
-			newBlock += fmt.Sprintf("\t%s %s\n", fieldName, strVal)
+			strVal := strings.Trim(elem.String(), "")
+			if len(strVal) > 0 {
+				newBlock += fmt.Sprintf("\t%s %s\n", fieldName, strVal)
+			}
 		case reflect.Bool:
 			var boolVal string
 			if elem.Bool() {
