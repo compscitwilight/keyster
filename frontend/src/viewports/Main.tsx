@@ -7,36 +7,36 @@ import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { KeyListing } from "../components/KeyListing";
 
 export function MainViewport() {
-  const menuStateContext = useContext(MenuStateContext);
-  if (!menuStateContext)
-    throw new Error("MenuStateContext not initialized");
+	const menuStateContext = useContext(MenuStateContext);
+	if (!menuStateContext) throw new Error("MenuStateContext not initialized");
 
-  const listingsContext = useContext(ListingsContext);
-  if (!listingsContext)
-    throw new Error("ListingsContext not initialized");
+	const listingsContext = useContext(ListingsContext);
+	if (!listingsContext) throw new Error("ListingsContext not initialized");
 
-  const [menuState, setMenuState] = menuStateContext;
-  const [keyListings, setKeyListings] = listingsContext;
+	const [menuState, setMenuState] = menuStateContext;
+	const [keyListings, setKeyListings] = listingsContext;
 
-  const setQuery = (newQuery: string) => setMenuState((s) => {
-    const cp = {} as MenuStateValue;
-    Object.assign(cp, s);
-    cp.query = newQuery;
-    return cp;
-  })
+	const setQuery = (newQuery: string) =>
+		setMenuState((s) => {
+			const cp = {} as MenuStateValue;
+			Object.assign(cp, s);
+			cp.query = newQuery;
+			return cp;
+		});
 
-  const onKeyListingClick = (absPath: string) => setMenuState((s) => {
-    const cp = {} as MenuStateValue;
-    Object.assign(cp, s);
-    cp.selectedKey = absPath;
-    return cp;
-  })
+	const onKeyListingClick = (absPath: string) =>
+		setMenuState((s) => {
+			const cp = {} as MenuStateValue;
+			Object.assign(cp, s);
+			cp.selectedKey = absPath;
+			return cp;
+		});
 
- 	useEffect(() => {
+	useEffect(() => {
 		GetKeys().then((results: Array<main.KeyListing>) => {
 			console.log(results);
 
-       const { query } = menuState;
+			const { query } = menuState;
 			if (query)
 				results = results.filter((r) =>
 					r.name.toLowerCase().includes(query.toLowerCase()),
@@ -58,7 +58,11 @@ export function MainViewport() {
 
 			<div className="grid gap-2 w-3/4 m-auto">
 				{keyListings.map((listing) => (
-					<KeyListing onClick={onKeyListingClick} key={listing.name} data={listing} />
+					<KeyListing
+						onClick={onKeyListingClick}
+						key={listing.name}
+						data={listing}
+					/>
 				))}
 			</div>
 
