@@ -5,16 +5,17 @@ import { GetKeys } from "../../wailsjs/go/main/App";
 import { main } from "../../wailsjs/go/models";
 import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { KeyListing } from "../components/KeyListing";
+import { NewKeyButton } from "../components/NewKeyButton";
 
 export function MainViewport() {
 	const menuStateContext = useContext(MenuStateContext);
 	if (!menuStateContext) throw new Error("MenuStateContext not initialized");
 
 	const listingsContext = useContext(ListingsContext);
-	if (!listingsContext) throw new Error("ListingsContext not initialized");
+  if (!listingsContext) throw new Error("ListingsContext not initialized");
 
 	const [menuState, setMenuState] = menuStateContext;
-	const [keyListings, setKeyListings] = listingsContext;
+  const [keyListings, setKeyListings] = listingsContext;
 
 	const setQuery = (newQuery: string) =>
 		setMenuState((s) => {
@@ -52,8 +53,9 @@ export function MainViewport() {
 
 	return (
 		<div>
-			<div className="mt-4 mb-8">
-				<Search onQuery={setQuery} />
+			<div className="flex items-center justify-center gap-4 mt-4 mb-8">
+        <Search onQuery={setQuery} />
+        <NewKeyButton />
 			</div>
 
 			<div className="grid gap-2 w-3/4 m-auto">

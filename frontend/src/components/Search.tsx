@@ -12,10 +12,10 @@ export function Search(props: { onQuery: (query: string) => void }) {
   };
 
   return (
-    <form onSubmit={onSearch} className="flex justify-center gap-4">
+    <form onSubmit={onSearch} className="flex justify-center gap-2">
       <input
         onChange={onChange}
-        className="dark:bg-neutral-700 w-1/2 px-2 py-1 rounded-lg"
+        className="dark:bg-neutral-700 px-2 py-1 rounded-lg"
         placeholder="Query by name, algorithm, key type, etc"
         type="text"
       />
