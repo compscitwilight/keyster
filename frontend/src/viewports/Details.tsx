@@ -5,7 +5,6 @@ import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { SSHConfigOption } from "../components/SSHConfigOption";
 import { main } from "../../wailsjs/go/models";
-import { IKeyListing } from "../types";
 import { SaveHostDeclaration } from "../../wailsjs/go/main/App";
 
 export function DetailsViewport() {
@@ -19,7 +18,7 @@ export function DetailsViewport() {
 	const [hostConfig, setHostConfig] = useState<main.HostDeclaration>({});
 	const [menuState, setMenuState] = menuStateContext;
 	const [keyListings] = keyListingsContext;
-	const [listing, setListing] = useState<IKeyListing>();
+	const [listing, setListing] = useState<main.KeyListing>();
 	const [showNullOptions, setShowNullOptions] = useState<boolean>(false);
 
 	const onGoBack = () =>

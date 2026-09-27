@@ -6,4 +6,8 @@ export function GetKeys():Promise<any>;
 
 export function Greet(arg1:string):Promise<string>;
 
+export function KeyListingBinding(arg1:main.KeyListing):Promise<void>;
+
+export function KnownHostMatchBinding(arg1:main.KnownHostMatch):Promise<void>;
+
 export function SaveHostDeclaration(arg1:string,arg2:main.HostDeclaration):Promise<void>;

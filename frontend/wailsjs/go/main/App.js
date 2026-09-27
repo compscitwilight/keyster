@@ -10,6 +10,14 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function KeyListingBinding(arg1) {
+  return window['go']['main']['App']['KeyListingBinding'](arg1);
+}
+
+export function KnownHostMatchBinding(arg1) {
+  return window['go']['main']['App']['KnownHostMatchBinding'](arg1);
+}
+
 export function SaveHostDeclaration(arg1, arg2) {
   return window['go']['main']['App']['SaveHostDeclaration'](arg1, arg2);
 }

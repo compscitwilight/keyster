@@ -1,8 +1,8 @@
 import { useContext, useEffect } from "react";
 import { Search } from "../components/Search";
 
-import type { IKeyListing } from "../types";
 import { GetKeys } from "../../wailsjs/go/main/App";
+import { main } from "../../wailsjs/go/models";
 import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { KeyListing } from "../components/KeyListing";
 
@@ -33,7 +33,7 @@ export function MainViewport() {
   })
 
  	useEffect(() => {
-		GetKeys().then((results: Array<IKeyListing>) => {
+		GetKeys().then((results: Array<main.KeyListing>) => {
 			console.log(results);
 
        const { query } = menuState;
