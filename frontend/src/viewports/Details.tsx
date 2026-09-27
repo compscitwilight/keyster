@@ -6,6 +6,7 @@ import { ListingsContext, MenuStateContext, MenuStateValue } from "../contexts";
 import { SSHConfigOption } from "../components/SSHConfigOption";
 import { main } from "../../wailsjs/go/models";
 import { SaveHostDeclaration } from "../../wailsjs/go/main/App";
+import { KnownHostsSection } from "../components/KnownHostsSection";
 
 export function DetailsViewport() {
 	const menuStateContext = useContext(MenuStateContext);
@@ -117,8 +118,8 @@ export function DetailsViewport() {
 
 					{/* known_hosts (coming soon) */}
 					<div>
-						<h1 className="text-xl font-bold">Known hosts</h1>
-						<p>...</p>
+            <h1 className="text-xl font-bold">Known hosts</h1>
+						<KnownHostsSection knownHosts={listing.knownHosts || []} />
 					</div>
 				</div>
 
