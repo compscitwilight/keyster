@@ -19,6 +19,7 @@ type KeyListing struct {
 	AbsPath    string           `json:"absPath"`
 	Algo       *KeyAlgo         `json:"algo"` // cryptographic algorithm
 	HostConfig *HostDeclaration `json:"hostConfig"`
+	KnownHosts []KnownHostMatch `json:"knownHosts"`
 	Modified   time.Time        `json:"modified"`
 }
 
@@ -80,13 +81,25 @@ func (a *App) GetKeys() *[]KeyListing {
 			fmt.Errorf("Failed to determine cryptographic algorithm for key file: ", err)
 		}
 
-		listings = append(listings, KeyListing{
+		listing := KeyListing{
 			Name:       info.Name(),
 			AbsPath:    absPath,
 			Algo:       algo,
 			HostConfig: host,
 			Modified:   info.ModTime(),
-		})
+		}
+
+		hostname := host.HostName
+		if hostname != nil {
+			knownHosts, err := GetKnownHostsForHost(*hostname)
+			if err != nil {
+				fmt.Errorf("Failed to retrieve known_hosts matches")
+			}
+
+			listing.KnownHosts = knownHosts
+		}
+
+		listings = append(listings, listing)
 	}
 
 	return &listings
