@@ -1,14 +1,9 @@
-import { useState } from "react";
-import { EllipsisVertical } from "lucide-react";
-
-import type { IKeyListing } from "../types";
-import { KeyListingDropdown } from "./KeyListingDropdown";
+import { main } from "../../wailsjs/go/models";
 
 export function KeyListing({ data, onClick }: {
-  data: IKeyListing;
+  data: main.KeyListing;
   onClick?: (absPath: string) => any;
 }) {
-  const [optionsToggled, setOptionsToggled] = useState<boolean>(false);
   const algo = data.algo?.algo || "unknown";
 
   return (
@@ -46,18 +41,6 @@ export function KeyListing({ data, onClick }: {
         >
           {algo}
         </p>
-      </div>
-
-      <div className="relative">
-        <div
-          onClick={() => setOptionsToggled((s) => !s)}
-          title="Options"
-          className="cursor-pointer"
-        >
-          <EllipsisVertical />
-        </div>
-
-        {optionsToggled && <KeyListingDropdown />}
       </div>
     </div>
   );
