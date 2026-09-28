@@ -3,7 +3,6 @@ module keyster
 go 1.25.0
 
 require (
-	filippo.io/keygen v1.0.0
 	github.com/charmbracelet/keygen v0.5.4
 	github.com/kevinburke/ssh_config v1.2.0
 	github.com/wailsapp/wails/v2 v2.16.0
@@ -11,7 +10,6 @@ require (
 )
 
 require (
-	filippo.io/bigmod v0.1.1-0.20260103110540-f8a47775ebe5 // indirect
 	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
