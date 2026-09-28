@@ -12,6 +12,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"filippo.io/keygen"
+	"github.com/charmbracelet/keygen"
 )
 
 type KeyListing struct {
@@ -103,4 +106,30 @@ func (a *App) GetKeys() *[]KeyListing {
 	}
 
 	return &listings
+}
+
+// UploadKey takes the contents of the uploaded key file, creates a key
+// file in ~/.ssh
+func (a *App) UploadKey(name string, contents []byte) error {
+	path := filepath.Join(os.Getenv("HOME"), ".ssh", name)
+	if _, err := os.ReadFile(path); err == nil {
+		return fmt.Errorf("a key file at %s already exists", path)
+	}
+
+	if err := os.WriteFile(path, contents, 0600); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GenerateKey generates a new SSH key pair
+//
+// Currently only supports PEM private keys
+func (a *App) GenerateKeys(name string, keyType keygen.KeyType) error {
+	if _, err := keygen.New(name, keygen.WithKeyType(keyType)); err != nil {
+		return err
+	}
+
+	return nil
 }
