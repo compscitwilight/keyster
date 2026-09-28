@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"filippo.io/keygen"
 	"github.com/charmbracelet/keygen"
 )
 
