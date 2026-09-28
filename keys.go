@@ -123,10 +123,29 @@ func (a *App) UploadKey(name string, contents []byte) error {
 }
 
 // GenerateKey generates a new SSH key pair
-//
-// Currently only supports PEM private keys
 func (a *App) GenerateKeys(name string, keyType keygen.KeyType) error {
-	if _, err := keygen.New(name, keygen.WithKeyType(keyType)); err != nil {
+	name = strings.Trim(name, "")
+	keypair, err := keygen.New(name, keygen.WithKeyType(keyType))
+
+	if err != nil {
+		return err
+	}
+
+	homeDir := os.Getenv("HOME")
+
+	if err := os.WriteFile(
+		filepath.Join(homeDir, ".ssh", name),
+		[]byte(keypair.AuthorizedKey()),
+		0600,
+	); err != nil {
+		return err
+	}
+
+	if err := os.WriteFile(
+		filepath.Join(homeDir, ".ssh", fmt.Sprintf("%s.pem", name)),
+		keypair.RawPrivateKey(),
+		0600,
+	); err != nil {
 		return err
 	}
 
