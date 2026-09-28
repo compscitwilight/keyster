@@ -138,6 +138,7 @@ func (a *App) GenerateKeys(name string, keyType keygen.KeyType) error {
 		[]byte(keypair.AuthorizedKey()),
 		0600,
 	); err != nil {
+		fmt.Printf("failed to write public key file: %x\n", err)
 		return err
 	}
 
@@ -146,6 +147,7 @@ func (a *App) GenerateKeys(name string, keyType keygen.KeyType) error {
 		keypair.RawPrivateKey(),
 		0600,
 	); err != nil {
+		fmt.Printf("failed to write private PEM file: %x\n", err)
 		return err
 	}
 
