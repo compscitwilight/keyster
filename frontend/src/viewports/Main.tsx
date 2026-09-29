@@ -1,4 +1,5 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useTransition } from "react";
+import { RefreshCcw } from "lucide-react";
 import { Search } from "../components/Search";
 
 import { GetKeys } from "../../wailsjs/go/main/App";
@@ -12,10 +13,11 @@ export function MainViewport() {
 	if (!menuStateContext) throw new Error("MenuStateContext not initialized");
 
 	const listingsContext = useContext(ListingsContext);
-  if (!listingsContext) throw new Error("ListingsContext not initialized");
+	if (!listingsContext) throw new Error("ListingsContext not initialized");
 
 	const [menuState, setMenuState] = menuStateContext;
-  const [keyListings, setKeyListings] = listingsContext;
+	const [keyListings, setKeyListings] = listingsContext;
+	const [isLoading, startLoading] = useTransition();
 
 	const setQuery = (newQuery: string) =>
 		setMenuState((s) => {
@@ -33,32 +35,48 @@ export function MainViewport() {
 			return cp;
 		});
 
-	useEffect(() => {
-		GetKeys().then((results: Array<main.KeyListing>) => {
-			console.log(results);
+	const retrieveKeys = () => {
+		startLoading(() => {
+			setKeyListings([]);
+			GetKeys().then((results: Array<main.KeyListing>) => {
+				console.log(results);
 
-			const { query } = menuState;
-			if (query)
-				results = results.filter((r) =>
-					r.name.toLowerCase().includes(query.toLowerCase()),
+				const { query } = menuState;
+				if (query)
+					results = results.filter((r) =>
+						r.name.toLowerCase().includes(query.toLowerCase()),
+					);
+
+				setKeyListings(
+					results.filter(
+						(k) =>
+							k.algo !== null && !k.name.includes("known_hosts"),
+					),
 				);
-
-			setKeyListings(
-				results.filter(
-					(k) => k.algo !== null && !k.name.includes("known_hosts"),
-				),
-			);
+			});
 		});
+	};
+
+	useEffect(() => {
+		retrieveKeys();
 	}, [menuState.query]);
 
 	return (
 		<div>
-			<div className="flex items-center justify-center gap-4 mt-4 mb-8">
-        <Search onQuery={setQuery} />
-        <NewKeyButton />
+			<div className="flex justify-center items-center gap-4 mt-4 mb-8">
+				<Search onQuery={setQuery} />
+				<NewKeyButton />
+				<button
+					onClick={retrieveKeys}
+          className="p-2 rounded-lg dark:bg-neutral-900
+          cursor-pointer disabled:cursor-not-allowed"
+					disabled={isLoading}
+				>
+					<RefreshCcw />
+				</button>
 			</div>
 
-			<div className="grid gap-2 w-3/4 m-auto">
+			<div className="grid gap-2 w-8/10 m-auto">
 				{keyListings.map((listing) => (
 					<KeyListing
 						onClick={onKeyListingClick}
