@@ -51,7 +51,7 @@ export function GenerateKeyModal() {
 						/>
 					</div>
 
-					<div className="grid">
+					<div className="grid gap-1">
 						<label className="text-lg font-bold" htmlFor="keyType">
 							Key Type
 						</label>
