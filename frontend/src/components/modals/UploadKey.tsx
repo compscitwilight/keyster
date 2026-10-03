@@ -1,5 +1,4 @@
-import { ChangeEvent, useContext, useState, useTransition } from "react";
-import { Camera } from "lucide-react";
+import { ChangeEvent, SubmitEvent, useContext, useState, useTransition } from "react";
 import { OverlayContext } from "../../contexts";
 import { UploadKey } from "../../../wailsjs/go/main/App";
 
@@ -8,7 +7,9 @@ export function UploadKeyModal() {
 	if (!overlayContext) throw new Error("OverlayContext is not initialized");
 
 	const [name, setName] = useState<string>();
-	const [keyContents, setKeyContents] = useState<number[]>();
+  const [keyContents, setKeyContents] = useState<number[]>();
+
+  const [isUploading, startUploading] = useTransition();
 	const [, setOverlay] = overlayContext;
 
 	async function onKeyUpload(e: ChangeEvent<HTMLInputElement>) {
@@ -22,13 +23,16 @@ export function UploadKeyModal() {
 		setKeyContents(Array.from(buf));
 	}
 
-	function onSubmit() {
-		if (!name || !keyContents) return;
-		UploadKey(name, keyContents);
+  function onSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    if (!name || !keyContents || isUploading) return;
+    startUploading(() => {
+      UploadKey(name, keyContents);
+    });
 	}
 
 	return (
-		<form>
+		<form onSubmit={onSubmit}>
 			<div className="text-left mb-4">
 				<h1 className="text-2xl font-semibold mb-4">Upload SSH key</h1>
 				<div className="grid gap-2">
