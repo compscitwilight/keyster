@@ -10,6 +10,20 @@
     
 </details>
 
+<details>
+  <summary>Key Information Page</summary>
+
+  ![](.github/screenshots/keyinfo.png)
+    
+</details>
+
+<details>
+  <summary>Generate Key</summary>
+
+  ![](.github/screenshots/generate_modal.png)
+    
+</details>
+
 ## Features
 
 - View and search for keys located in `~/.ssh`
