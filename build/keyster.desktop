@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Keyster
+Comment=Graphical SSH key and ssh_config manager
+Exec=keyster
+Icon=keyster
+Terminal=false
+Categories=Utility;Development;Security;
+Keywords=ssh;key;config;manager;
