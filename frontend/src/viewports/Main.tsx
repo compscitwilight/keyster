@@ -85,8 +85,6 @@ export function MainViewport() {
 					/>
 				))}
 			</div>
-
-			<p>{keyListings.length}</p>
 		</div>
 	);
 }

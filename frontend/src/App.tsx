@@ -10,6 +10,7 @@ import {
 } from "./contexts";
 import { MainViewport } from "./viewports/Main";
 import { DetailsViewport } from "./viewports/Details";
+import { TitleBar } from "./components/TitleBar";
 
 function App() {
 	const [menuState, setMenuState] = useState<MenuStateValue>({});
@@ -19,7 +20,8 @@ function App() {
 	const [overlayState, setOverlayState] = useState<OverlayContextValue>({});
 
 	return (
-		<div id="App">
+    <div id="App">
+      <TitleBar />
 			<MenuStateContext.Provider value={[menuState, setMenuState]}>
 				<OverlayContext.Provider
 					value={[overlayState, setOverlayState]}

@@ -23,6 +23,7 @@ func main() {
 		MaxWidth:    1024,
 		MaxHeight:   768,
 		AlwaysOnTop: true,
+		Frameless:   true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
