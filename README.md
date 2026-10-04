@@ -47,6 +47,11 @@
 
 To install the latest stable release of Keyster, visit the [releases page](https://github.com/compscitwilight/keyster/releases/latest) to download the binary.
 
+For an express installation, run the following command:
+```sh
+curl -sSL https://raw.githubusercontent.com/compscitwilight/keyster/main/install.sh | bash
+```
+
 ### Build
 
 In order to manually build and run Keyster manually, use the following commands:
