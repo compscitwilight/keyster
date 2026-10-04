@@ -1,27 +1,31 @@
 # Keyster
+[![Go Reference](https://img.shields.io/badge/go-1.27+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Wails](https://img.shields.io/badge/built%20with-Wails-red?logo=wails)](https://wails.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Keyster** is a graphical SSH key and ssh_config manager for Linux built with Go, Wails, and React.
 
 ## Screenshots
+
 <details>
   <summary>Details View</summary>
 
-  ![](.github/screenshots/details.png)
-    
+![](.github/screenshots/details.png)
+
 </details>
 
 <details>
   <summary>Key Information Page</summary>
 
-  ![](.github/screenshots/keyinfo.png)
-    
+![](.github/screenshots/keyinfo.png)
+
 </details>
 
 <details>
   <summary>Generate Key</summary>
 
-  ![](.github/screenshots/generate_modal.png)
-    
+![](.github/screenshots/generate_modal.png)
+
 </details>
 
 ## Features
@@ -31,6 +35,11 @@
 - View known hosts for a given key
 - Upload keys to `~/.ssh`
 - Generate RSA keys from UI
+
+## Prerequisites
+- **Go** (1.27 recommended)
+- **Wails CLI** (`go install github.com/wailsapp/wails/v2/cmd/wails@latest`)
+- **Webkit2GTK**: `libwebkit2gtk-4.1-dev` (or `4.0` for legacy systems)
 
 ## Installation
 
@@ -50,7 +59,8 @@ cd keyster
 # build / execution
 go mod download
 wails build -tags webkit2_41
-chmod +X ./build/bin/keyster
+
+# run
 ./build/bin/keyster &
 ```
 
