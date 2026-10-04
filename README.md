@@ -1,7 +1,17 @@
 # Keyster
-**Keyster** is a graphical SSH key and ssh_config manager for Linux.
+
+**Keyster** is a graphical SSH key and ssh_config manager for Linux built with Go, Wails, and React.
+
+## Screenshots
+<details>
+    <summary>Details View</summary>
+
+    ![](.github/screenshots/details.png)
+    
+</details>
 
 ## Features
+
 - View and search for keys located in `~/.ssh`
 - View and modify `ssh_config` options for each key
 - View known hosts for a given key
@@ -9,11 +19,15 @@
 - Generate RSA keys from UI
 
 ## Installation
+
 ### Release
+
 To install the latest stable release of Keyster, visit the [releases page](https://github.com/compscitwilight/keyster/releases/latest) to download the binary.
 
 ### Build
+
 In order to manually build and run Keyster manually, use the following commands:
+
 ```sh
 # create a clone repo
 git clone https://github.com/compscitwilight/keyster
