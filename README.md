@@ -15,6 +15,11 @@ To install the latest stable release of Keyster, visit the [releases page](https
 ### Build
 In order to manually build and run Keyster manually, use the following commands:
 ```sh
+# create a clone repo
+git clone https://github.com/compscitwilight/keyster
+cd keyster
+
+# build / execution
 go mod download
 wails build -tags webkit2_41
 chmod +X ./build/bin/keyster
