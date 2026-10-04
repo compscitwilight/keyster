@@ -4,9 +4,9 @@
 
 ## Screenshots
 <details>
-    <summary>Details View</summary>
+  <summary>Details View</summary>
 
-    ![](.github/screenshots/details.png)
+  ![](.github/screenshots/details.png)
     
 </details>
 
