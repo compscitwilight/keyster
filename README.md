@@ -36,6 +36,9 @@
 - Upload keys to `~/.ssh`
 - Generate RSA keys from UI
 
+### Todo
+- [ ] Add support for comma-separated lists in host config
+
 ## Prerequisites
 - **Go** (1.27 recommended)
 - **Wails CLI** (`go install github.com/wailsapp/wails/v2/cmd/wails@latest`)
