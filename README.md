@@ -56,7 +56,7 @@ In order to manually build and run Keyster manually, use the following commands:
 git clone https://github.com/compscitwilight/keyster
 cd keyster
 
-# build / execution
+# build
 go mod download
 wails build -tags webkit2_41
 
