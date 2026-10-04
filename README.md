@@ -11,3 +11,15 @@
 ## Installation
 ### Release
 To install the latest stable release of Keyster, visit the [releases page](https://github.com/compscitwilight/keyster/releases/latest) to download the binary.
+
+### Build
+In order to manually build and run Keyster manually, use the following commands:
+```sh
+go mod download
+wails build -tags webkit2_41
+chmod +X ./build/bin/keyster
+./build/bin/keyster &
+```
+
+> [!NOTE]
+> `webkit2_41` is used for GTK version 4.1. If you are running a legacy GTK version (i.e. `libwebkit2gtk-4.0` on Ubuntu 20.04, Debian 11, etc), use `wails build -tags webkit2_40` instead.
