@@ -52,7 +52,7 @@ To install the latest stable release of Keyster, visit the [releases page](https
 
 For an express installation, run the following command:
 ```sh
-curl -sSL https://raw.githubusercontent.com/compscitwilight/keyster/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/compscitwilight/keyster/main/build/install.sh | bash
 ```
 
 ### Build
